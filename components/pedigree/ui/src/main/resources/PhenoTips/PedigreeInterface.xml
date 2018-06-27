@@ -115,6 +115,7 @@ $response.setContentType('application/json')##
 #if ("$!request.action" == "getPreferences")
   #set($user = $!{xwiki.getDocument($xcontext.getUser()).getObject('XWiki.XWikiUsers')})##
   #set($config = $!{xwiki.getDocument('XWiki.XWikiPreferences').getObject('PhenoTips.PedigreeGlobalSettings')})##
+  #set($configEid = $xwiki.getDocument('XWiki.XWikiPreferences').getObject('PhenoTips.LabeledIdentifierGlobalSettings'))
   #set($configPT = $xwiki.getDocument('data.WebHome').getObject('PhenoTips.DBConfigurationClass'))##
   { "user": {
         "firstName" : "$!{user.getProperty('first_name').value}",
@@ -125,6 +126,10 @@ $response.setContentType('application/json')##
             "disabledFields"               : #__getDisabledFields(),
             "requiredFields"               : #__getRequiredFields(),
             "replaceIdWithExternalID"      : #if ($configPT &amp;&amp; "$!{configPT.getProperty('hideInternalIds').value}" == '1')true#else false#end
+        #if ($configEid)
+            ,
+            "externalIDUniqueCheck"        : #__convertToBooleanString("$!{configEid.getProperty('validateExternalId').value}")
+        #end
         #if ($config)
             ,
             "dateDisplayFormat"            : "$!{config.getProperty('dateDisplayFormat').value}",
